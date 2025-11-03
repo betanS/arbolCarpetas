@@ -114,3 +114,8 @@ h1, h2{
     display: block;
     clear: both;
 }
+
+img{
+    height: 7%;
+    width: 7%;
+}

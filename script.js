@@ -56,6 +56,7 @@ addForm.querySelector("button").addEventListener('click', function(e){
   const li = document.createElement('li');
   const ExName = document.createElement('span');
   const deleteBtn = document.createElement('span');
+  const img = document.createElement('img');
 
 // AGREGAR CONTENIDO DE TEXTO
   
@@ -63,15 +64,19 @@ addForm.querySelector("button").addEventListener('click', function(e){
   ExName.textContent = value;
   deleteBtn.textContent = 'delete';
   
+  
+  
 // AGREGAR CLASES
   
   // Añade la clase 'name' a 'ExName' y 'delete' a 'deleteBtn' para estilización y referencia.
   ExName.classList.add('name');
   deleteBtn.classList.add('delete');
+  img.setAttribute('src', '/imgs/emptyFolder.png');
 
 
 // AÑADIR AL DOM
   // Inserta 'ExName' y 'deleteBtn' dentro del 'li', y después añade este 'li' al final de list.
+  li.appendChild(img);
   li.appendChild(ExName);
   li.appendChild(deleteBtn);
   list.appendChild(li);
@@ -99,3 +104,37 @@ searchBar.addEventListener('keyup',(e)=>{
     }
   });
 });
+
+
+
+var ruta = "";
+
+
+function guardar(ruta, archivo) {
+  var objetosEnRuta = JSON.parse(localStorage.getItem(ruta));
+  if(objetosEnRuta == null){
+    objetosEnRuta = [];
+  }
+  objetosEnRuta.add(archivo);
+  localStorage.setItem(ruta, objetosEnRuta);
+}
+
+function borrar (ruta, archivo){
+  var objetosEnRuta = JSON.parse(localStorage.getItem(ruta));
+  if(objetosEnRuta == null || encontrar(archivo, objetosEnRuta) == -1){
+    console.log("No existe el archivo");
+  }
+  else{
+    //objetosEnRuta.remove[encontrar(archivo, objetosEnRuta)]
+  }
+}
+
+function encontrar(archivo, array) {                  //Encuentra la posicion de un valor en un array
+    var found = -1;
+    console.log(array.length);
+    for(var i = 0; i < array.length; i++) {
+        if(archivo == array[i]) found = i;
+    }
+    console.log("Valor " + archivo + " encontrado en la posicion " + found);
+    return found;
+}
