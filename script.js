@@ -1,3 +1,37 @@
+var ruta = "/";
+localStorage.clear();
+var objetosEnRuta = JSON.parse(localStorage.getItem(ruta));
+console.log(objetosEnRuta);
+
+
+//RECUPERAR CARPETAS GUARDADAS
+if(objetosEnRuta != null){
+  for (let index = 0; index < objetosEnRuta.length; index++) {
+  const value = objetosEnRuta[index]; 
+  const li = document.createElement('li');
+  const ExName = document.createElement('span');
+  const deleteBtn = document.createElement('span');
+  const img = document.createElement('img');
+
+  ExName.textContent = value;
+  guardar(ruta, value);
+  deleteBtn.textContent = 'delete';
+  
+  ExName.classList.add('name');
+  deleteBtn.classList.add('delete');
+  img.setAttribute('src', '/imgs/emptyFolder.png');
+
+  li.appendChild(img);
+  li.appendChild(ExName);
+  li.appendChild(deleteBtn);
+  list.appendChild(li);
+  
+}
+}
+
+
+
+
 // DEFINICIÓN DE FORMULARIOS Y LISTA
 
 const searchForm=document.forms[0]; // Accede al primer formulario en el documento (índice [0]) y lo almacena en 'searchForm'.
@@ -12,7 +46,8 @@ const list = document.querySelector('#ex-list ul'); // Selecciona el elemento 'u
 list.addEventListener('click', function(e) {
   // Verifica si el elemento clicado tiene la clase 'delete', que indica que se ha clicado el botón para eliminar.
   if(e.target.className == 'delete'){
-    const li = e.target.parentElement; // Selecciona el elemento 'li' padre del botón de eliminación, que es el elemento de la lista a eliminar.    
+    const li = e.target.parentElement; // Selecciona el elemento 'li' padre del botón de eliminación, que es el elemento de la lista a eliminar. 
+    borrar(ruta, li.innerText)   
     li.parentNode.removeChild(li); // Elimina el elemento 'li' del DOM
     
    // Dos formas alternativas de ocultar el elemento sin eliminarlo (estableciendo el estilo display: none).
@@ -62,6 +97,7 @@ addForm.querySelector("button").addEventListener('click', function(e){
   
   // Asigna el texto del ejercicio al span ExName y la palabra delete al botón deleteBtn.
   ExName.textContent = value;
+  guardar(ruta, value);
   deleteBtn.textContent = 'delete';
   
   
@@ -107,7 +143,7 @@ searchBar.addEventListener('keyup',(e)=>{
 
 
 
-var ruta = "";
+
 
 
 function guardar(ruta, archivo) {
@@ -115,26 +151,20 @@ function guardar(ruta, archivo) {
   if(objetosEnRuta == null){
     objetosEnRuta = [];
   }
-  objetosEnRuta.add(archivo);
-  localStorage.setItem(ruta, objetosEnRuta);
+  objetosEnRuta.push(archivo);
+  localStorage.setItem(ruta, JSON.stringify(objetosEnRuta));
+  console.log(ruta + archivo + " guardado correctamente.");
 }
 
 function borrar (ruta, archivo){
   var objetosEnRuta = JSON.parse(localStorage.getItem(ruta));
-  if(objetosEnRuta == null || encontrar(archivo, objetosEnRuta) == -1){
-    console.log("No existe el archivo");
+
+  if(objetosEnRuta.indexOf(archivo) != -1){
+    objetosEnRuta.splice(objetosEnRuta.indexOf(archivo), 1);
+    localStorage.setItem(ruta, JSON.stringify(objetosEnRuta));
+    console.log(ruta + archivo + " borrado correctamente.");
   }
   else{
-    //objetosEnRuta.remove[encontrar(archivo, objetosEnRuta)]
+    console.log("No existe el archivo");
   }
-}
-
-function encontrar(archivo, array) {                  //Encuentra la posicion de un valor en un array
-    var found = -1;
-    console.log(array.length);
-    for(var i = 0; i < array.length; i++) {
-        if(archivo == array[i]) found = i;
-    }
-    console.log("Valor " + archivo + " encontrado en la posicion " + found);
-    return found;
 }
