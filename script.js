@@ -1,5 +1,5 @@
 var ruta = "/";
-localStorage.clear();
+//localStorage.clear();
 var objetosEnRuta = JSON.parse(localStorage.getItem(ruta));
 console.log(objetosEnRuta);
 
@@ -7,6 +7,9 @@ console.log(objetosEnRuta);
 //RECUPERAR CARPETAS GUARDADAS
 if(objetosEnRuta != null){
   for (let index = 0; index < objetosEnRuta.length; index++) {
+    const list = document.querySelector('#ex-list ul'); // Selecciona el elemento 'ul' dentro del contenedor ''#ex-list' y lo asigna a list, donde se listarán los ejercicios.
+
+
   const value = objetosEnRuta[index]; 
   const li = document.createElement('li');
   const ExName = document.createElement('span');
@@ -14,7 +17,6 @@ if(objetosEnRuta != null){
   const img = document.createElement('img');
 
   ExName.textContent = value;
-  guardar(ruta, value);
   deleteBtn.textContent = 'delete';
   
   ExName.classList.add('name');
@@ -44,10 +46,11 @@ const list = document.querySelector('#ex-list ul'); // Selecciona el elemento 'u
 
 // Añade un evento 'click' al elemento 'list' que se ejecutará cada vez que se haga clic en él.
 list.addEventListener('click', function(e) {
+  var test = e.target.previousElementSibling.innerHTML;
   // Verifica si el elemento clicado tiene la clase 'delete', que indica que se ha clicado el botón para eliminar.
   if(e.target.className == 'delete'){
     const li = e.target.parentElement; // Selecciona el elemento 'li' padre del botón de eliminación, que es el elemento de la lista a eliminar. 
-    borrar(ruta, li.innerText)   
+    borrar(ruta, test)   
     li.parentNode.removeChild(li); // Elimina el elemento 'li' del DOM
     
    // Dos formas alternativas de ocultar el elemento sin eliminarlo (estableciendo el estilo display: none).
@@ -97,6 +100,7 @@ addForm.querySelector("button").addEventListener('click', function(e){
   
   // Asigna el texto del ejercicio al span ExName y la palabra delete al botón deleteBtn.
   ExName.textContent = value;
+  console.log(ruta);
   guardar(ruta, value);
   deleteBtn.textContent = 'delete';
   
@@ -158,13 +162,14 @@ function guardar(ruta, archivo) {
 
 function borrar (ruta, archivo){
   var objetosEnRuta = JSON.parse(localStorage.getItem(ruta));
-
+  console.log(objetosEnRuta);
+  console.log(objetosEnRuta.indexOf(archivo) );
   if(objetosEnRuta.indexOf(archivo) != -1){
     objetosEnRuta.splice(objetosEnRuta.indexOf(archivo), 1);
     localStorage.setItem(ruta, JSON.stringify(objetosEnRuta));
     console.log(ruta + archivo + " borrado correctamente.");
   }
   else{
-    console.log("No existe el archivo");
+    console.log("No existe el archivo " + archivo);
   }
 }
