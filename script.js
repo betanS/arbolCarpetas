@@ -1,3 +1,4 @@
+var ruta = "/";
 recuperarCarpetas("/");
 //localStorage.clear();
 
