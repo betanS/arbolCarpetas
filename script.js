@@ -1,10 +1,14 @@
-var ruta = "/";
+recuperarCarpetas("/");
 //localStorage.clear();
-var objetosEnRuta = JSON.parse(localStorage.getItem(ruta));
-console.log(objetosEnRuta);
+
 
 
 //RECUPERAR CARPETAS GUARDADAS
+function recuperarCarpetas(ruta) {
+  var ruta = ruta;
+  var objetosEnRuta = JSON.parse(localStorage.getItem(ruta));
+console.log(objetosEnRuta);
+  
 if(objetosEnRuta != null){
   for (let index = 0; index < objetosEnRuta.length; index++) {
     const list = document.querySelector('#ex-list ul'); // Selecciona el elemento 'ul' dentro del contenedor ''#ex-list' y lo asigna a list, donde se listarán los ejercicios.
@@ -13,21 +17,26 @@ if(objetosEnRuta != null){
   const value = objetosEnRuta[index]; 
   const li = document.createElement('li');
   const ExName = document.createElement('span');
+  const addBtn = document.createElement('span');
   const deleteBtn = document.createElement('span');
   const img = document.createElement('img');
 
   ExName.textContent = value;
   deleteBtn.textContent = 'delete';
+  addBtn.textContent = '+';
   
   ExName.classList.add('name');
+  addBtn.classList.add('add');
   deleteBtn.classList.add('delete');
   img.setAttribute('src', '/imgs/emptyFolder.png');
 
   li.appendChild(img);
   li.appendChild(ExName);
+  li.appendChild(addBtn);
   li.appendChild(deleteBtn);
   list.appendChild(li);
   
+}
 }
 }
 
@@ -42,27 +51,29 @@ const addForm=document.forms["add-ex"]; // Accede al formulario con el nombre ad
 
 const list = document.querySelector('#ex-list ul'); // Selecciona el elemento 'ul' dentro del contenedor ''#ex-list' y lo asigna a list, donde se listarán los ejercicios.
 
+
+
+
 // BORRAR EJERCICIOS
 
 // Añade un evento 'click' al elemento 'list' que se ejecutará cada vez que se haga clic en él.
 list.addEventListener('click', function(e) {
+  const value = addForm.querySelector('input[type="text"]').value; // Obtiene el valor del campo de entrada de texto en addForm, que representa el nombre del ejercicio.
   var test = e.target.previousElementSibling.innerHTML;
   // Verifica si el elemento clicado tiene la clase 'delete', que indica que se ha clicado el botón para eliminar.
   if(e.target.className == 'delete'){
     const li = e.target.parentElement; // Selecciona el elemento 'li' padre del botón de eliminación, que es el elemento de la lista a eliminar. 
     borrar(ruta, test)   
     li.parentNode.removeChild(li); // Elimina el elemento 'li' del DOM
-    
-   // Dos formas alternativas de ocultar el elemento sin eliminarlo (estableciendo el estilo display: none).
-   //li.setAttribute ('style', 'display: none');
-   //li.style.display="none"; 
-    
+  }
+  //AGREGAR A CARPETA ESPECIFICA
+  if (e.target.className == 'add'){
+    guardar(ruta+test+"/", value);
     }
 });
 
 
 // OCULTAR EJERCICIOS
-
 
 const hideBox = document.querySelector('#hide'); 
 // Añade un evento 'change' al checkbox 'hideBox' que se dispara al marcar o desmarcar.
@@ -82,44 +93,13 @@ hideBox.addEventListener('change', function(){
 // Añade un evento 'click' al botón dentro del formulario 'addForm' que se ejecutará al hacer clic en él.
 addForm.querySelector("button").addEventListener('click', function(e){
 
- // Previene la acción por defecto del botón para evitar que la página se recargue.
+
   e.preventDefault();
   
-
- // CREAR ELEMENTOS
   
-  
-  const value = addForm.querySelector('input[type="text"]').value; // Obtiene el valor del campo de entrada de texto en addForm, que representa el nombre del ejercicio.
-  // Crea tres elementos HTML (<li>, <span> para el nombre del ejercicio, y otro <span> para el botón de eliminación).
-  const li = document.createElement('li');
-  const ExName = document.createElement('span');
-  const deleteBtn = document.createElement('span');
-  const img = document.createElement('img');
-
-// AGREGAR CONTENIDO DE TEXTO
-  
-  // Asigna el texto del ejercicio al span ExName y la palabra delete al botón deleteBtn.
-  ExName.textContent = value;
-  console.log(ruta);
-  guardar(ruta, value);
-  deleteBtn.textContent = 'delete';
-  
-  
-  
-// AGREGAR CLASES
-  
-  // Añade la clase 'name' a 'ExName' y 'delete' a 'deleteBtn' para estilización y referencia.
-  ExName.classList.add('name');
-  deleteBtn.classList.add('delete');
-  img.setAttribute('src', '/imgs/emptyFolder.png');
-
-
-// AÑADIR AL DOM
-  // Inserta 'ExName' y 'deleteBtn' dentro del 'li', y después añade este 'li' al final de list.
-  li.appendChild(img);
-  li.appendChild(ExName);
-  li.appendChild(deleteBtn);
-  list.appendChild(li);
+  const value = addForm.querySelector('input[type="text"]').value;
+  guardar(ruta, value);/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  recuperarCarpetas(ruta);
   });
 
 // FILTRAR EJERCICIOS
@@ -151,6 +131,7 @@ searchBar.addEventListener('keyup',(e)=>{
 
 
 function guardar(ruta, archivo) {
+  console.log(ruta);
   var objetosEnRuta = JSON.parse(localStorage.getItem(ruta));
   if(objetosEnRuta == null){
     objetosEnRuta = [];

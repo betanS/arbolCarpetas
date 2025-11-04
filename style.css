@@ -76,6 +76,19 @@ h1, h2{
     background: #333;
 }
 
+.add{
+    float: right;
+    background: #36f310;
+    padding: 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+}
+
+.add:hover{
+    background: #333;
+}
+
 #add-ex{
     width: 400px;
     margin: 0 auto;
