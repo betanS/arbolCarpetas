@@ -1,17 +1,24 @@
 var ruta = "/";
-recuperarCarpetas("/");
+mostrarCarpetas("/");
 //localStorage.clear();
 
+//OBJETOS + CONSTRUCTOR
+class objeto{
+  constructor(nombre, tipo, ruta){
+    this.nombre = nombre;
+    this.tipo = tipo;
+    //this.ruta = ruta;             //No hace falta si guardamos por ruta
+  }
+}
 
-
-//RECUPERAR CARPETAS GUARDADAS
-function recuperarCarpetas(ruta) {
+//RECUPERAR CARPETAS GUARDADAS  
+function mostrarCarpetas(ruta) {
   var ruta = ruta;
   var objetosEnRuta = JSON.parse(localStorage.getItem(ruta));
 console.log(objetosEnRuta);
   
-if(objetosEnRuta != null){
-  for (let index = 0; index < objetosEnRuta.length; index++) {
+if(objetosEnRuta != null){  
+  for (let index = 0; index < objetosEnRuta.length; index++) {  //FOR EACH (objetosEnRuta where [i].tipo == "carpeta" mostrarCarpetas([i].ruta)  else mostrar file)
     const list = document.querySelector('#ex-list ul'); // Selecciona el elemento 'ul' dentro del contenedor ''#ex-list' y lo asigna a list, donde se listarán los ejercicios.
 
 
@@ -99,6 +106,17 @@ addForm.querySelector("button").addEventListener('click', function(e){
   
   
   const value = addForm.querySelector('input[type="text"]').value;
+  var tipo = "";
+  if (isFile(value)){
+    console.log("Es un archivo");
+    tipo = "file";
+  }else{
+    console.log("Es una carpeta");
+    tipo = "carpeta";
+  }
+  
+  var nuevoArchivo = new objeto(value, tipo, ruta);
+
   guardar(ruta, value);/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   recuperarCarpetas(ruta);
   });
@@ -130,7 +148,7 @@ searchBar.addEventListener('keyup',(e)=>{
 
 
 
-
+//STORAGE FUNCTIONS
 function guardar(ruta, archivo) {
   console.log(ruta);
   var objetosEnRuta = JSON.parse(localStorage.getItem(ruta));
@@ -154,4 +172,14 @@ function borrar (ruta, archivo){
   else{
     console.log("No existe el archivo " + archivo);
   }
+}
+function isFile(nombre) {
+    const extensiones = ['.txt', '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.jpg', '.jpeg', '.png', '.gif', '.mp3', '.mp4', '.avi', '.mov', '.zip', '.rar', '.html', '.css', '.js', '.php', '.py', '.java', '.c', '.cpp', '.htaccess'];
+    extensiones.forEach(ext => {
+      if(nombre.toLowerCase().endsWith(ext)){
+        return true;;
+      }else{
+        return false;
+      }
+    });
 }
