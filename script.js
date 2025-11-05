@@ -2,7 +2,7 @@ var ruta = "/";
 mostrarCarpetas("/");
 //localStorage.clear();
 
-//OBJETOS + CONSTRUCTOR
+//OBJETOS + CONSTRUCTOR           Podria ser innecesario si archivos ya guardara nombre y tipo por bloque
 class objeto{
   constructor(nombre, tipo, ruta){
     this.nombre = nombre;
