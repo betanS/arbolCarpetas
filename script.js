@@ -1,6 +1,10 @@
-var ruta = "/";
-mostrarCarpetas("/");
+//INICIALIZACION
+sessionStorage.setItem("ruta", "/");
+var ruta = sessionStorage.getItem("ruta");
+mostrarCarpetas(ruta);
 //localStorage.clear();
+
+
 
 //OBJETOS + CONSTRUCTOR           Podria ser innecesario si archivos ya guardara nombre y tipo por bloque
 class objeto{
@@ -13,16 +17,43 @@ class objeto{
 
 //RECUPERAR CARPETAS GUARDADAS  
 function mostrarCarpetas(ruta) {
-  var ruta = ruta;
+  const list = document.querySelector('#ex-list ul'); // Selecciona el elemento 'ul' dentro del contenedor ''#ex-list' y lo asigna a list, donde se listarán los ejercicios.
+  list.innerHTML = ""; // Limpia la lista de ejercicios antes de mostrar las carpetas de la nueva ruta.
   var objetosEnRuta = JSON.parse(localStorage.getItem(ruta));
-console.log(objetosEnRuta);
   
+  const titulo = document.querySelector('#ex-list h2');
+  titulo.textContent = "Contenido de: " + ruta;
+  if(ruta != "/"){
+    const backLi = document.createElement('li');
+    const backSpan = document.createElement('span');
+    const backbutton = document.createElement('button');
+    backbutton.textContent = "Volver";
+    backbutton.addEventListener('click', function(){
+      var rutaArray = ruta.split("/");
+      rutaArray.pop(); // Elimina el último elemento vacío después de la última barra
+      rutaArray.pop(); // Elimina el nombre de la carpeta actual
+      var nuevaruta = rutaArray.join("/") + "/";
+      if (nuevaruta == "//"){
+        nuevaruta = "/";
+      }
+      sessionStorage.setItem("ruta", nuevaruta);
+      ruta = sessionStorage.getItem("ruta");
+      mostrarCarpetas(ruta);
+      console.log("Ruta actual: " + ruta);
+    });
+    backSpan.appendChild(backbutton);
+    backLi.appendChild(backSpan);
+    list.appendChild(backLi);
+  }
+
 if(objetosEnRuta != null){  
   for (let index = 0; index < objetosEnRuta.length; index++) {  //FOR EACH (objetosEnRuta where [i].tipo == "carpeta" mostrarCarpetas([i].ruta)  else mostrar file)
-    const list = document.querySelector('#ex-list ul'); // Selecciona el elemento 'ul' dentro del contenedor ''#ex-list' y lo asigna a list, donde se listarán los ejercicios.
 
 
-  const value = objetosEnRuta[index]; 
+  const value = objetosEnRuta[index].nombre; //nombre del archivo o carpeta
+  const tipo = objetosEnRuta[index].tipo; //tipo: carpeta o file
+
+  
   const li = document.createElement('li');
   const ExName = document.createElement('span');
   const addBtn = document.createElement('span');
@@ -36,7 +67,15 @@ if(objetosEnRuta != null){
   ExName.classList.add('name');
   addBtn.classList.add('add');
   deleteBtn.classList.add('delete');
+  if (tipo != "carpeta"){
+    img.setAttribute('src', '/imgs/file.png');
+  }else if(localStorage.getItem(ruta + value + "/") != null){
+    img.setAttribute('src', '/imgs/filledFolder.png');
+    li.classList.add('carpeta');
+  } else{
   img.setAttribute('src', '/imgs/emptyFolder.png');
+  li.classList.add('carpeta');
+  }
 
   li.appendChild(img);
   li.appendChild(ExName);
@@ -59,6 +98,7 @@ const addForm=document.forms["add-ex"]; // Accede al formulario con el nombre ad
 
 const list = document.querySelector('#ex-list ul'); // Selecciona el elemento 'ul' dentro del contenedor ''#ex-list' y lo asigna a list, donde se listarán los ejercicios.
 
+const botonCarpeta = list.querySelectorAll('#carpeta'); // Selecciona el botón con el id 'carpeta' y lo guarda en botonCarpeta.
 
 
 
@@ -67,17 +107,38 @@ const list = document.querySelector('#ex-list ul'); // Selecciona el elemento 'u
 // Añade un evento 'click' al elemento 'list' que se ejecutará cada vez que se haga clic en él.
 list.addEventListener('click', function(e) {
   const value = addForm.querySelector('input[type="text"]').value; // Obtiene el valor del campo de entrada de texto en addForm, que representa el nombre del ejercicio.
-  var test = e.target.previousElementSibling.innerHTML;
   // Verifica si el elemento clicado tiene la clase 'delete', que indica que se ha clicado el botón para eliminar.
   if(e.target.className == 'delete'){
+    var test = e.target.previousElementSibling.innerHTML; // Obtiene el nombre del ejercicio a eliminar desde el elemento hermano anterior al botón de eliminación.
     const li = e.target.parentElement; // Selecciona el elemento 'li' padre del botón de eliminación, que es el elemento de la lista a eliminar. 
     borrar(ruta, test)   
     li.parentNode.removeChild(li); // Elimina el elemento 'li' del DOM
   }
   //AGREGAR A CARPETA ESPECIFICA
   if (e.target.className == 'add'){
-    guardar(ruta+test+"/", value);
+    var tipo = "";
+    if (isFile(value)){
+      console.log("Es un archivo");
+      tipo = "file";
+    }else{
+      console.log("Es una carpeta");
+      tipo = "carpeta";
     }
+  
+    var nuevoArchivo = new objeto(value, tipo);
+
+    guardar(ruta+test+"/", nuevoArchivo);
+  }
+
+  if (e.target.parentElement.classList.contains('carpeta')){
+    console.log("Carpeta clicada: " + e.target.textContent);
+    list.innerHTML = ""; // Limpia la lista de ejercicios antes de mostrar las carpetas de la nueva ruta.
+    var nuevaruta = ruta + e.target.textContent + "/";
+    sessionStorage.setItem("ruta", nuevaruta);
+    ruta = sessionStorage.getItem("ruta");
+    mostrarCarpetas(ruta);
+    console.log("Ruta actual: " + ruta);
+  }
 });
 
 
@@ -115,10 +176,10 @@ addForm.querySelector("button").addEventListener('click', function(e){
     tipo = "carpeta";
   }
   
-  var nuevoArchivo = new objeto(value, tipo, ruta);
+  var nuevoArchivo = new objeto(value, tipo);
 
-  guardar(ruta, value);/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  recuperarCarpetas(ruta);
+  guardar(ruta, nuevoArchivo);/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  mostrarCarpetas(ruta);
   });
 
 // FILTRAR EJERCICIOS
@@ -143,7 +204,6 @@ searchBar.addEventListener('keyup',(e)=>{
     }
   });
 });
-
 
 
 
