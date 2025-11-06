@@ -1,8 +1,9 @@
 //INICIALIZACION
+//localStorage.clear();
 sessionStorage.setItem("ruta", "/");
 var ruta = sessionStorage.getItem("ruta");
 mostrarCarpetas(ruta);
-//localStorage.clear();
+
 
 
 
@@ -27,6 +28,7 @@ function mostrarCarpetas(ruta) {
     const backLi = document.createElement('li');
     const backSpan = document.createElement('span');
     const backbutton = document.createElement('button');
+
     backbutton.textContent = "Volver";
     backbutton.addEventListener('click', function(){
       var rutaArray = ruta.split("/");
@@ -115,7 +117,7 @@ list.addEventListener('click', function(e) {
     li.parentNode.removeChild(li); // Elimina el elemento 'li' del DOM
   }
   //AGREGAR A CARPETA ESPECIFICA
-  if (e.target.className == 'add'){
+  else if (e.target.className == 'add'){
     var tipo = "";
     if (isFile(value)){
       console.log("Es un archivo");
@@ -130,10 +132,11 @@ list.addEventListener('click', function(e) {
     guardar(ruta+test+"/", nuevoArchivo);
   }
 
-  if (e.target.parentElement.classList.contains('carpeta')){
-    console.log("Carpeta clicada: " + e.target.textContent);
+  else if (e.target.className == 'carpeta'){
+    var nombre = e.target.querySelector('.name').innerHTML;
+    console.log("Carpeta clicada: " + nombre);
     list.innerHTML = ""; // Limpia la lista de ejercicios antes de mostrar las carpetas de la nueva ruta.
-    var nuevaruta = ruta + e.target.textContent + "/";
+    var nuevaruta = ruta + nombre + "/"; 
     sessionStorage.setItem("ruta", nuevaruta);
     ruta = sessionStorage.getItem("ruta");
     mostrarCarpetas(ruta);
