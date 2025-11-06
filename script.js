@@ -223,10 +223,10 @@ function guardar(ruta, archivo) {
   console.log(ruta + archivo + " guardado correctamente.");
 }
 
-function borrar (ruta, archivo){
+function borrar (ruta, archivo){                              //ADAPTAR PARA OBJETOS
   var objetosEnRuta = JSON.parse(localStorage.getItem(ruta));
   console.log(objetosEnRuta);
-  console.log(objetosEnRuta.indexOf(archivo) );
+  console.log(objetosEnRuta.indexOf(archivo));
   if(objetosEnRuta.indexOf(archivo) != -1){
     objetosEnRuta.splice(objetosEnRuta.indexOf(archivo), 1);
     localStorage.setItem(ruta, JSON.stringify(objetosEnRuta));
