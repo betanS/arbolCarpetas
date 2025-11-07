@@ -17,36 +17,11 @@ class objeto{
 }
 
 //RECUPERAR CARPETAS GUARDADAS  
-function mostrarCarpetas(ruta) {
+function mostrarCarpetas() {
   const list = document.querySelector('#ex-list ul'); // Selecciona el elemento 'ul' dentro del contenedor ''#ex-list' y lo asigna a list, donde se listarán los ejercicios.
   list.innerHTML = ""; // Limpia la lista de ejercicios antes de mostrar las carpetas de la nueva ruta.
-  var objetosEnRuta = JSON.parse(localStorage.getItem(ruta));
+  var objetosEnRuta = JSON.parse(localStorage.getItem("/"));
   
-  const titulo = document.querySelector('#ex-list h2');
-  titulo.textContent = "Contenido de: " + ruta;
-  if(ruta != "/"){
-    const backLi = document.createElement('li');
-    const backSpan = document.createElement('span');
-    const backbutton = document.createElement('button');
-
-    backbutton.textContent = "Volver";
-    backbutton.addEventListener('click', function(){
-      var rutaArray = ruta.split("/");
-      rutaArray.pop(); // Elimina el último elemento vacío después de la última barra
-      rutaArray.pop(); // Elimina el nombre de la carpeta actual
-      var nuevaruta = rutaArray.join("/") + "/";
-      if (nuevaruta == "//"){
-        nuevaruta = "/";
-      }
-      sessionStorage.setItem("ruta", nuevaruta);
-      ruta = sessionStorage.getItem("ruta");
-      mostrarCarpetas(ruta);
-      console.log("Ruta actual: " + ruta);
-    });
-    backSpan.appendChild(backbutton);
-    backLi.appendChild(backSpan);
-    list.appendChild(backLi);
-  }
 
 if(objetosEnRuta != null){  
   for (let index = 0; index < objetosEnRuta.length; index++) {  //FOR EACH (objetosEnRuta where [i].tipo == "carpeta" mostrarCarpetas([i].ruta)  else mostrar file)
@@ -57,18 +32,23 @@ if(objetosEnRuta != null){
 
   
   const li = document.createElement('li');
+  const desplegable = document.createElement('span');
   const ExName = document.createElement('span');
   const addBtn = document.createElement('span');
   const deleteBtn = document.createElement('span');
   const img = document.createElement('img');
+  
 
   ExName.textContent = value;
   deleteBtn.textContent = 'delete';
   addBtn.textContent = '+';
+  desplegable.textContent = '▶';
+
   
   ExName.classList.add('name');
   addBtn.classList.add('add');
   deleteBtn.classList.add('delete');
+  desplegable.classList.add('desplegable');
   if (tipo != "carpeta"){
     img.setAttribute('src', '/imgs/file.png');
   }else if(localStorage.getItem(ruta + value + "/") != null){
@@ -83,6 +63,7 @@ if(objetosEnRuta != null){
   li.appendChild(ExName);
   li.appendChild(addBtn);
   li.appendChild(deleteBtn);
+  li.appendChild(desplegable);
   list.appendChild(li);
   
 }
@@ -108,6 +89,7 @@ const botonCarpeta = list.querySelectorAll('#carpeta'); // Selecciona el botón 
 
 // Añade un evento 'click' al elemento 'list' que se ejecutará cada vez que se haga clic en él.
 list.addEventListener('click', function(e) {
+  var ruta = "/"; // Ruta inicializada a la raíz.
   const value = addForm.querySelector('input[type="text"]').value; // Obtiene el valor del campo de entrada de texto en addForm, que representa el nombre del ejercicio.
   // Verifica si el elemento clicado tiene la clase 'delete', que indica que se ha clicado el botón para eliminar.
   if(e.target.className == 'delete'){
@@ -118,18 +100,29 @@ list.addEventListener('click', function(e) {
   }
   //AGREGAR A CARPETA ESPECIFICA
   else if (e.target.className == 'add'){
+    var valor = addForm.querySelector('input[type="text"]').value;
     var tipo = "";
-    if (isFile(value)){
+    for (let i = 0; i < list.children.length; i++) {
+      const element = list.children[i];
+      if(element.className == "carpeta" && element.querySelector('.name').innerHTML == e.target.previousElementSibling.innerHTML){
+        var carpetaDestino = element.querySelector('.name').innerHTML;
+        break;
+      }
+    }
+    console.log("Carpeta destino: " + carpetaDestino);
+    var rutaDestino = ruta + carpetaDestino + "/";
+    console.log("Ruta destino: " + rutaDestino);
+
+    if (isFile(valor)){
       console.log("Es un archivo");
       tipo = "file";
     }else{
-      console.log("Es una carpeta");
+      console.log(""+valor+" Es una carpeta");
       tipo = "carpeta";
     }
-  
     var nuevoArchivo = new objeto(value, tipo);
 
-    guardar(ruta+test+"/", nuevoArchivo);
+    guardar(rutaDestino, nuevoArchivo);
   }
 
   else if (e.target.className == 'carpeta'){
@@ -141,6 +134,17 @@ list.addEventListener('click', function(e) {
     ruta = sessionStorage.getItem("ruta");
     mostrarCarpetas(ruta);
     console.log("Ruta actual: " + ruta);
+  }
+  else if (e.target.className == 'desplegable'){
+    var nombre = e.target.previousElementSibling.previousElementSibling.previousElementSibling.innerHTML;
+    console.log("Carpeta clicada: " + nombre);
+    var objetosEnCarpeta = localStorage.getItem(ruta + nombre + "/");
+    for (let i = 0; i < objetosEnCarpeta.length(); i++) {
+      const element = objetosEnCarpeta[i];
+      e.target.parentElement.querySelector('li').innerHTML += "<li>" + element.nombre + "</li>";
+      console.log(element);
+      
+    }
   }
 });
 
@@ -220,7 +224,7 @@ function guardar(ruta, archivo) {
   }
   objetosEnRuta.push(archivo);
   localStorage.setItem(ruta, JSON.stringify(objetosEnRuta));
-  console.log(ruta + archivo + " guardado correctamente.");
+  console.log(ruta + archivo.nombre + " guardado correctamente.");
 }
 
 function borrar (ruta, archivo){                              //ADAPTAR PARA OBJETOS
