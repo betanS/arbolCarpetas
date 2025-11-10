@@ -1,6 +1,4 @@
-// ==========================
-// INICIALIZACIÓN Y SELECTORES
-// ==========================
+// #################################################INICIALIZACIÓN Y SELECTORES
 if (!localStorage.getItem('arbol')) {
   const raiz = { nombre: "/", tipo: "carpeta", contenido: {} };
   localStorage.setItem('arbol', JSON.stringify(raiz));
@@ -16,9 +14,8 @@ const hideAllCheckbox = document.querySelector('#hide');
 // Carpeta objetivo para la próxima creación (se selecciona al pulsar '+')
 let carpetaDestinoParaAgregar = null;
 
-// ==========================
-// CLASE OBJETO Y UTILIDADES
-// ==========================
+
+// #################################################CLASE OBJETO Y UTILIDADES
 class Objeto {
   constructor(nombre, tipo) {
     this.nombre = nombre;
@@ -46,9 +43,7 @@ function esArchivo(nombre) {
 }
 
 /*
-// ==========================
-// EJEMPLO DE ESTRUCTURA DEL ÁRBOL
-// ==========================
+// #################################################EJEMPLO DE ESTRUCTURA DEL ÁRBOL
 {
   nombre: "Carpeta raíz",
   tipo: "carpeta",
@@ -73,9 +68,7 @@ function esArchivo(nombre) {
 
 
 
-// ==========================
-// RENDERIZADO DEL ÁRBOL
-// ==========================
+// #################################################RENDERIZADO DEL ÁRBOL
 function mostrarArbolObjeto(objeto, contenedor) {
   contenedor.innerHTML = '';
   for (const nombre in objeto.contenido) {
@@ -144,9 +137,8 @@ function getRutaDelObjeto(targetObjeto) {
   return path.length ? '/' + path.join('/') : '';
 }
 
-// ==========================
-// AÑADIR Y BORRAR ELEMENTOS
-// ==========================
+
+// #################################################AÑADIR Y BORRAR ELEMENTOS
 function agregarDesdeFormulario(e) {
   e.preventDefault();
   const nombre = addInput.value.trim(); 
@@ -175,9 +167,8 @@ function eliminarElemento(padreObjeto, nombre) {
   mostrarArbol();
 }
 
-// ==========================
-// FILTRADO + VISIBILIDAD DE ANCESTROS
-// ==========================
+
+// #################################################FILTRADO + VISIBILIDAD
 function filtrarArbol(term) {
   term = term.trim().toLowerCase();
   // Recorremos DOM y aplicamos visibilidad: si un li tiene nombre que coincide o alguno de sus descendientes coincide => mostrarlo.
@@ -202,9 +193,8 @@ function filtrarArbol(term) {
   });
 }
 
-// ==========================
-// EVENTOS GLOBALES (teclado/ratón)
-// ==========================
+
+// #################################################EVENTOS GLOBALES (teclado/ratón)
 addForm.addEventListener('submit', agregarDesdeFormulario);
 addInput.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') { carpetaDestinoParaAgregar = null; addInput.placeholder = 'Agregar un Ejercicio...'; addInput.value = ''; }
